@@ -1,0 +1,712 @@
+
+ADC.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000003d4  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .bss          00000004  00800060  00800060  00000448  2**0
+                  ALLOC
+  2 .stab         000007d4  00000000  00000000  00000448  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  3 .stabstr      000004ea  00000000  00000000  00000c1c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+   8:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+   c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  10:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  14:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  18:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  1c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  20:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  24:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  28:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  2c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  30:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  34:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  38:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  3c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  40:	0c 94 97 01 	jmp	0x32e	; 0x32e <__vector_16>
+  44:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  48:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  4c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  50:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d8 e0       	ldi	r29, 0x08	; 8
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+
+00000060 <__do_clear_bss>:
+  60:	10 e0       	ldi	r17, 0x00	; 0
+  62:	a0 e6       	ldi	r26, 0x60	; 96
+  64:	b0 e0       	ldi	r27, 0x00	; 0
+  66:	01 c0       	rjmp	.+2      	; 0x6a <.do_clear_bss_start>
+
+00000068 <.do_clear_bss_loop>:
+  68:	1d 92       	st	X+, r1
+
+0000006a <.do_clear_bss_start>:
+  6a:	a4 36       	cpi	r26, 0x64	; 100
+  6c:	b1 07       	cpc	r27, r17
+  6e:	e1 f7       	brne	.-8      	; 0x68 <.do_clear_bss_loop>
+  70:	0e 94 df 01 	call	0x3be	; 0x3be <main>
+  74:	0c 94 e8 01 	jmp	0x3d0	; 0x3d0 <_exit>
+
+00000078 <__bad_interrupt>:
+  78:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000007c <enu_ADCinit>:
+
+static u16 * ADC_pu16AsynchConversionResult = NULL;
+static void (* ADC_pvNotificationFunc)(void)= NULL;
+
+ES_t enu_ADCinit(void)
+{
+  7c:	df 93       	push	r29
+  7e:	cf 93       	push	r28
+  80:	0f 92       	push	r0
+  82:	cd b7       	in	r28, 0x3d	; 61
+  84:	de b7       	in	r29, 0x3e	; 62
+	ES_t local_enumError=ES_NOK;
+  86:	81 e0       	ldi	r24, 0x01	; 1
+  88:	89 83       	std	Y+1, r24	; 0x01
+	ADMUX |=(1<<6) ;
+	ADMUX &=~(1<<7) ;
+
+#elif voltage_reference== INTERNA_2_56
+
+	ADMUX |=(1<<6) ;
+  8a:	a7 e2       	ldi	r26, 0x27	; 39
+  8c:	b0 e0       	ldi	r27, 0x00	; 0
+  8e:	e7 e2       	ldi	r30, 0x27	; 39
+  90:	f0 e0       	ldi	r31, 0x00	; 0
+  92:	80 81       	ld	r24, Z
+  94:	80 64       	ori	r24, 0x40	; 64
+  96:	8c 93       	st	X, r24
+	ADMUX |=(1<<7) ;
+  98:	a7 e2       	ldi	r26, 0x27	; 39
+  9a:	b0 e0       	ldi	r27, 0x00	; 0
+  9c:	e7 e2       	ldi	r30, 0x27	; 39
+  9e:	f0 e0       	ldi	r31, 0x00	; 0
+  a0:	80 81       	ld	r24, Z
+  a2:	80 68       	ori	r24, 0x80	; 128
+  a4:	8c 93       	st	X, r24
+#else
+#error "Error in voltage_reference!!"
+#endif
+
+#if  ADC_ADJUSTMENT == Right_adjust
+	ADMUX&=~(1<<5);
+  a6:	a7 e2       	ldi	r26, 0x27	; 39
+  a8:	b0 e0       	ldi	r27, 0x00	; 0
+  aa:	e7 e2       	ldi	r30, 0x27	; 39
+  ac:	f0 e0       	ldi	r31, 0x00	; 0
+  ae:	80 81       	ld	r24, Z
+  b0:	8f 7d       	andi	r24, 0xDF	; 223
+  b2:	8c 93       	st	X, r24
+#elif ADC_PRESCALERE == PRE_32
+	ADCSRA |=  (1<<0);
+	ADCSRA &=~ (1<<1);
+	ADCSRA |=  (1<<2);
+#elif ADC_PRESCALERE == PRE_64
+	ADCSRA &=~ (1<<0);
+  b4:	a6 e2       	ldi	r26, 0x26	; 38
+  b6:	b0 e0       	ldi	r27, 0x00	; 0
+  b8:	e6 e2       	ldi	r30, 0x26	; 38
+  ba:	f0 e0       	ldi	r31, 0x00	; 0
+  bc:	80 81       	ld	r24, Z
+  be:	8e 7f       	andi	r24, 0xFE	; 254
+  c0:	8c 93       	st	X, r24
+	ADCSRA |=  (1<<1);
+  c2:	a6 e2       	ldi	r26, 0x26	; 38
+  c4:	b0 e0       	ldi	r27, 0x00	; 0
+  c6:	e6 e2       	ldi	r30, 0x26	; 38
+  c8:	f0 e0       	ldi	r31, 0x00	; 0
+  ca:	80 81       	ld	r24, Z
+  cc:	82 60       	ori	r24, 0x02	; 2
+  ce:	8c 93       	st	X, r24
+	ADCSRA |=  (1<<2);
+  d0:	a6 e2       	ldi	r26, 0x26	; 38
+  d2:	b0 e0       	ldi	r27, 0x00	; 0
+  d4:	e6 e2       	ldi	r30, 0x26	; 38
+  d6:	f0 e0       	ldi	r31, 0x00	; 0
+  d8:	80 81       	ld	r24, Z
+  da:	84 60       	ori	r24, 0x04	; 4
+  dc:	8c 93       	st	X, r24
+#else
+#error "Error in Prescaler Division Factor !!"
+#endif
+
+
+	return local_enumError;
+  de:	89 81       	ldd	r24, Y+1	; 0x01
+}
+  e0:	0f 90       	pop	r0
+  e2:	cf 91       	pop	r28
+  e4:	df 91       	pop	r29
+  e6:	08 95       	ret
+
+000000e8 <enu_StartConversion>:
+
+ES_t enu_StartConversion(void)
+{
+  e8:	df 93       	push	r29
+  ea:	cf 93       	push	r28
+  ec:	0f 92       	push	r0
+  ee:	cd b7       	in	r28, 0x3d	; 61
+  f0:	de b7       	in	r29, 0x3e	; 62
+	ES_t local_enumError=ES_NOK;
+  f2:	81 e0       	ldi	r24, 0x01	; 1
+  f4:	89 83       	std	Y+1, r24	; 0x01
+
+    ADCSRA|=(1<<6);
+  f6:	a6 e2       	ldi	r26, 0x26	; 38
+  f8:	b0 e0       	ldi	r27, 0x00	; 0
+  fa:	e6 e2       	ldi	r30, 0x26	; 38
+  fc:	f0 e0       	ldi	r31, 0x00	; 0
+  fe:	80 81       	ld	r24, Z
+ 100:	80 64       	ori	r24, 0x40	; 64
+ 102:	8c 93       	st	X, r24
+
+	 local_enumError=ES_OK;
+ 104:	19 82       	std	Y+1, r1	; 0x01
+
+	return local_enumError;
+ 106:	89 81       	ldd	r24, Y+1	; 0x01
+}
+ 108:	0f 90       	pop	r0
+ 10a:	cf 91       	pop	r28
+ 10c:	df 91       	pop	r29
+ 10e:	08 95       	ret
+
+00000110 <enu_ADCEnable>:
+ES_t enu_ADCEnable(void)
+{
+ 110:	df 93       	push	r29
+ 112:	cf 93       	push	r28
+ 114:	0f 92       	push	r0
+ 116:	cd b7       	in	r28, 0x3d	; 61
+ 118:	de b7       	in	r29, 0x3e	; 62
+
+	ES_t local_enumError=ES_NOK;
+ 11a:	81 e0       	ldi	r24, 0x01	; 1
+ 11c:	89 83       	std	Y+1, r24	; 0x01
+
+       ADCSRA|=(1<<7);
+ 11e:	a6 e2       	ldi	r26, 0x26	; 38
+ 120:	b0 e0       	ldi	r27, 0x00	; 0
+ 122:	e6 e2       	ldi	r30, 0x26	; 38
+ 124:	f0 e0       	ldi	r31, 0x00	; 0
+ 126:	80 81       	ld	r24, Z
+ 128:	80 68       	ori	r24, 0x80	; 128
+ 12a:	8c 93       	st	X, r24
+
+   	 local_enumError=ES_OK;
+ 12c:	19 82       	std	Y+1, r1	; 0x01
+
+	return local_enumError;
+ 12e:	89 81       	ldd	r24, Y+1	; 0x01
+}
+ 130:	0f 90       	pop	r0
+ 132:	cf 91       	pop	r28
+ 134:	df 91       	pop	r29
+ 136:	08 95       	ret
+
+00000138 <enu_ADCDisable>:
+ES_t enu_ADCDisable(void)
+{
+ 138:	df 93       	push	r29
+ 13a:	cf 93       	push	r28
+ 13c:	0f 92       	push	r0
+ 13e:	cd b7       	in	r28, 0x3d	; 61
+ 140:	de b7       	in	r29, 0x3e	; 62
+	ES_t local_enumError=ES_NOK;
+ 142:	81 e0       	ldi	r24, 0x01	; 1
+ 144:	89 83       	std	Y+1, r24	; 0x01
+
+	ADCSRA &=~(1<<7);
+ 146:	a6 e2       	ldi	r26, 0x26	; 38
+ 148:	b0 e0       	ldi	r27, 0x00	; 0
+ 14a:	e6 e2       	ldi	r30, 0x26	; 38
+ 14c:	f0 e0       	ldi	r31, 0x00	; 0
+ 14e:	80 81       	ld	r24, Z
+ 150:	8f 77       	andi	r24, 0x7F	; 127
+ 152:	8c 93       	st	X, r24
+
+   	 local_enumError=ES_OK;
+ 154:	19 82       	std	Y+1, r1	; 0x01
+
+	return local_enumError;
+ 156:	89 81       	ldd	r24, Y+1	; 0x01
+}
+ 158:	0f 90       	pop	r0
+ 15a:	cf 91       	pop	r28
+ 15c:	df 91       	pop	r29
+ 15e:	08 95       	ret
+
+00000160 <enu_INTEnable>:
+
+ES_t enu_INTEnable(void)
+{
+ 160:	df 93       	push	r29
+ 162:	cf 93       	push	r28
+ 164:	0f 92       	push	r0
+ 166:	cd b7       	in	r28, 0x3d	; 61
+ 168:	de b7       	in	r29, 0x3e	; 62
+	ES_t local_enumError=ES_NOK;
+ 16a:	81 e0       	ldi	r24, 0x01	; 1
+ 16c:	89 83       	std	Y+1, r24	; 0x01
+
+    ADCSRA|=(1<<3);
+ 16e:	a6 e2       	ldi	r26, 0x26	; 38
+ 170:	b0 e0       	ldi	r27, 0x00	; 0
+ 172:	e6 e2       	ldi	r30, 0x26	; 38
+ 174:	f0 e0       	ldi	r31, 0x00	; 0
+ 176:	80 81       	ld	r24, Z
+ 178:	88 60       	ori	r24, 0x08	; 8
+ 17a:	8c 93       	st	X, r24
+
+   	 local_enumError=ES_OK;
+ 17c:	19 82       	std	Y+1, r1	; 0x01
+
+	return local_enumError;
+ 17e:	89 81       	ldd	r24, Y+1	; 0x01
+}
+ 180:	0f 90       	pop	r0
+ 182:	cf 91       	pop	r28
+ 184:	df 91       	pop	r29
+ 186:	08 95       	ret
+
+00000188 <enu_INTDisable>:
+ES_t enu_INTDisable(void)
+{
+ 188:	df 93       	push	r29
+ 18a:	cf 93       	push	r28
+ 18c:	0f 92       	push	r0
+ 18e:	cd b7       	in	r28, 0x3d	; 61
+ 190:	de b7       	in	r29, 0x3e	; 62
+	ES_t local_enumError=ES_NOK;
+ 192:	81 e0       	ldi	r24, 0x01	; 1
+ 194:	89 83       	std	Y+1, r24	; 0x01
+
+    ADCSRA &=~(1<<7);
+ 196:	a6 e2       	ldi	r26, 0x26	; 38
+ 198:	b0 e0       	ldi	r27, 0x00	; 0
+ 19a:	e6 e2       	ldi	r30, 0x26	; 38
+ 19c:	f0 e0       	ldi	r31, 0x00	; 0
+ 19e:	80 81       	ld	r24, Z
+ 1a0:	8f 77       	andi	r24, 0x7F	; 127
+ 1a2:	8c 93       	st	X, r24
+
+   	 local_enumError=ES_OK;
+ 1a4:	19 82       	std	Y+1, r1	; 0x01
+
+	return local_enumError;
+ 1a6:	89 81       	ldd	r24, Y+1	; 0x01
+}
+ 1a8:	0f 90       	pop	r0
+ 1aa:	cf 91       	pop	r28
+ 1ac:	df 91       	pop	r29
+ 1ae:	08 95       	ret
+
+000001b0 <enu_GetResultSync>:
+
+
+ES_t enu_GetResultSync(u16 *Copy_pu16Result)
+{
+ 1b0:	df 93       	push	r29
+ 1b2:	cf 93       	push	r28
+ 1b4:	cd b7       	in	r28, 0x3d	; 61
+ 1b6:	de b7       	in	r29, 0x3e	; 62
+ 1b8:	27 97       	sbiw	r28, 0x07	; 7
+ 1ba:	0f b6       	in	r0, 0x3f	; 63
+ 1bc:	f8 94       	cli
+ 1be:	de bf       	out	0x3e, r29	; 62
+ 1c0:	0f be       	out	0x3f, r0	; 63
+ 1c2:	cd bf       	out	0x3d, r28	; 61
+ 1c4:	9f 83       	std	Y+7, r25	; 0x07
+ 1c6:	8e 83       	std	Y+6, r24	; 0x06
+	ES_t local_enumError=ES_NOK;
+ 1c8:	81 e0       	ldi	r24, 0x01	; 1
+ 1ca:	8d 83       	std	Y+5, r24	; 0x05
+
+	u32 Local_u32TimeoutCounter = 0 ;
+ 1cc:	19 82       	std	Y+1, r1	; 0x01
+ 1ce:	1a 82       	std	Y+2, r1	; 0x02
+ 1d0:	1b 82       	std	Y+3, r1	; 0x03
+ 1d2:	1c 82       	std	Y+4, r1	; 0x04
+		if (Copy_pu16Result != NULL)
+ 1d4:	8e 81       	ldd	r24, Y+6	; 0x06
+ 1d6:	9f 81       	ldd	r25, Y+7	; 0x07
+ 1d8:	00 97       	sbiw	r24, 0x00	; 0
+ 1da:	09 f4       	brne	.+2      	; 0x1de <enu_GetResultSync+0x2e>
+ 1dc:	59 c0       	rjmp	.+178    	; 0x290 <enu_GetResultSync+0xe0>
+		{
+
+			ADMUX &=~ 0x1F;   // Set ADC_0
+ 1de:	a7 e2       	ldi	r26, 0x27	; 39
+ 1e0:	b0 e0       	ldi	r27, 0x00	; 0
+ 1e2:	e7 e2       	ldi	r30, 0x27	; 39
+ 1e4:	f0 e0       	ldi	r31, 0x00	; 0
+ 1e6:	80 81       	ld	r24, Z
+ 1e8:	80 7e       	andi	r24, 0xE0	; 224
+ 1ea:	8c 93       	st	X, r24
+
+		    ADCSRA|=(1<<6);  //Start Conversion
+ 1ec:	a6 e2       	ldi	r26, 0x26	; 38
+ 1ee:	b0 e0       	ldi	r27, 0x00	; 0
+ 1f0:	e6 e2       	ldi	r30, 0x26	; 38
+ 1f2:	f0 e0       	ldi	r31, 0x00	; 0
+ 1f4:	80 81       	ld	r24, Z
+ 1f6:	80 64       	ori	r24, 0x40	; 64
+ 1f8:	8c 93       	st	X, r24
+ 1fa:	0b c0       	rjmp	.+22     	; 0x212 <enu_GetResultSync+0x62>
+
+
+				while ( (ADCSRA|=(1<<6) == 0) && (Local_u32TimeoutCounter < ADC_TIMEOUT))
+				{
+					Local_u32TimeoutCounter++ ;
+ 1fc:	89 81       	ldd	r24, Y+1	; 0x01
+ 1fe:	9a 81       	ldd	r25, Y+2	; 0x02
+ 200:	ab 81       	ldd	r26, Y+3	; 0x03
+ 202:	bc 81       	ldd	r27, Y+4	; 0x04
+ 204:	01 96       	adiw	r24, 0x01	; 1
+ 206:	a1 1d       	adc	r26, r1
+ 208:	b1 1d       	adc	r27, r1
+ 20a:	89 83       	std	Y+1, r24	; 0x01
+ 20c:	9a 83       	std	Y+2, r25	; 0x02
+ 20e:	ab 83       	std	Y+3, r26	; 0x03
+ 210:	bc 83       	std	Y+4, r27	; 0x04
+			ADMUX &=~ 0x1F;   // Set ADC_0
+
+		    ADCSRA|=(1<<6);  //Start Conversion
+
+
+				while ( (ADCSRA|=(1<<6) == 0) && (Local_u32TimeoutCounter < ADC_TIMEOUT))
+ 212:	a6 e2       	ldi	r26, 0x26	; 38
+ 214:	b0 e0       	ldi	r27, 0x00	; 0
+ 216:	e6 e2       	ldi	r30, 0x26	; 38
+ 218:	f0 e0       	ldi	r31, 0x00	; 0
+ 21a:	80 81       	ld	r24, Z
+ 21c:	8c 93       	st	X, r24
+ 21e:	8c 91       	ld	r24, X
+ 220:	88 23       	and	r24, r24
+ 222:	61 f0       	breq	.+24     	; 0x23c <enu_GetResultSync+0x8c>
+ 224:	89 81       	ldd	r24, Y+1	; 0x01
+ 226:	9a 81       	ldd	r25, Y+2	; 0x02
+ 228:	ab 81       	ldd	r26, Y+3	; 0x03
+ 22a:	bc 81       	ldd	r27, Y+4	; 0x04
+ 22c:	80 31       	cpi	r24, 0x10	; 16
+ 22e:	27 e2       	ldi	r18, 0x27	; 39
+ 230:	92 07       	cpc	r25, r18
+ 232:	20 e0       	ldi	r18, 0x00	; 0
+ 234:	a2 07       	cpc	r26, r18
+ 236:	20 e0       	ldi	r18, 0x00	; 0
+ 238:	b2 07       	cpc	r27, r18
+ 23a:	00 f3       	brcs	.-64     	; 0x1fc <enu_GetResultSync+0x4c>
+				{
+					Local_u32TimeoutCounter++ ;
+				}
+				if (Local_u32TimeoutCounter == ADC_TIMEOUT)
+ 23c:	89 81       	ldd	r24, Y+1	; 0x01
+ 23e:	9a 81       	ldd	r25, Y+2	; 0x02
+ 240:	ab 81       	ldd	r26, Y+3	; 0x03
+ 242:	bc 81       	ldd	r27, Y+4	; 0x04
+ 244:	80 31       	cpi	r24, 0x10	; 16
+ 246:	27 e2       	ldi	r18, 0x27	; 39
+ 248:	92 07       	cpc	r25, r18
+ 24a:	20 e0       	ldi	r18, 0x00	; 0
+ 24c:	a2 07       	cpc	r26, r18
+ 24e:	20 e0       	ldi	r18, 0x00	; 0
+ 250:	b2 07       	cpc	r27, r18
+ 252:	19 f4       	brne	.+6      	; 0x25a <enu_GetResultSync+0xaa>
+				{
+					local_enumError = ES_NOK ;
+ 254:	81 e0       	ldi	r24, 0x01	; 1
+ 256:	8d 83       	std	Y+5, r24	; 0x05
+ 258:	19 c0       	rjmp	.+50     	; 0x28c <enu_GetResultSync+0xdc>
+				}
+				else
+				{
+					ADCSRA |=(1<<4); //Clear the interrupt flag
+ 25a:	a6 e2       	ldi	r26, 0x26	; 38
+ 25c:	b0 e0       	ldi	r27, 0x00	; 0
+ 25e:	e6 e2       	ldi	r30, 0x26	; 38
+ 260:	f0 e0       	ldi	r31, 0x00	; 0
+ 262:	80 81       	ld	r24, Z
+ 264:	80 61       	ori	r24, 0x10	; 16
+ 266:	8c 93       	st	X, r24
+
+					#if ADC_ADJUSTMENT == Right_adjust
+						*Copy_pu16Result = (ADCL|(ADCH << 8))  ;
+ 268:	e4 e2       	ldi	r30, 0x24	; 36
+ 26a:	f0 e0       	ldi	r31, 0x00	; 0
+ 26c:	80 81       	ld	r24, Z
+ 26e:	28 2f       	mov	r18, r24
+ 270:	30 e0       	ldi	r19, 0x00	; 0
+ 272:	e5 e2       	ldi	r30, 0x25	; 37
+ 274:	f0 e0       	ldi	r31, 0x00	; 0
+ 276:	80 81       	ld	r24, Z
+ 278:	88 2f       	mov	r24, r24
+ 27a:	90 e0       	ldi	r25, 0x00	; 0
+ 27c:	98 2f       	mov	r25, r24
+ 27e:	88 27       	eor	r24, r24
+ 280:	82 2b       	or	r24, r18
+ 282:	93 2b       	or	r25, r19
+ 284:	ee 81       	ldd	r30, Y+6	; 0x06
+ 286:	ff 81       	ldd	r31, Y+7	; 0x07
+ 288:	91 83       	std	Z+1, r25	; 0x01
+ 28a:	80 83       	st	Z, r24
+						#error " Wrong ADC_ADJUSTMENT"
+
+					#endif
+				}
+
+				local_enumError = ES_OK ;
+ 28c:	1d 82       	std	Y+5, r1	; 0x05
+ 28e:	02 c0       	rjmp	.+4      	; 0x294 <enu_GetResultSync+0xe4>
+
+
+
+		else
+		{
+			local_enumError = ES_NULLPOINTER ;
+ 290:	82 e0       	ldi	r24, 0x02	; 2
+ 292:	8d 83       	std	Y+5, r24	; 0x05
+		}
+
+	return local_enumError;
+ 294:	8d 81       	ldd	r24, Y+5	; 0x05
+}
+ 296:	27 96       	adiw	r28, 0x07	; 7
+ 298:	0f b6       	in	r0, 0x3f	; 63
+ 29a:	f8 94       	cli
+ 29c:	de bf       	out	0x3e, r29	; 62
+ 29e:	0f be       	out	0x3f, r0	; 63
+ 2a0:	cd bf       	out	0x3d, r28	; 61
+ 2a2:	cf 91       	pop	r28
+ 2a4:	df 91       	pop	r29
+ 2a6:	08 95       	ret
+
+000002a8 <enu_StartConversionAsynch>:
+
+ES_t enu_StartConversionAsynch(u16 *Copy_pu16Result, void (*Copy_pvNotificationFunc)(void))
+{
+ 2a8:	df 93       	push	r29
+ 2aa:	cf 93       	push	r28
+ 2ac:	00 d0       	rcall	.+0      	; 0x2ae <enu_StartConversionAsynch+0x6>
+ 2ae:	00 d0       	rcall	.+0      	; 0x2b0 <enu_StartConversionAsynch+0x8>
+ 2b0:	0f 92       	push	r0
+ 2b2:	cd b7       	in	r28, 0x3d	; 61
+ 2b4:	de b7       	in	r29, 0x3e	; 62
+ 2b6:	9b 83       	std	Y+3, r25	; 0x03
+ 2b8:	8a 83       	std	Y+2, r24	; 0x02
+ 2ba:	7d 83       	std	Y+5, r23	; 0x05
+ 2bc:	6c 83       	std	Y+4, r22	; 0x04
+    ES_t local_enumError = ES_NOK;
+ 2be:	81 e0       	ldi	r24, 0x01	; 1
+ 2c0:	89 83       	std	Y+1, r24	; 0x01
+
+    if ((Copy_pu16Result != NULL) && (Copy_pvNotificationFunc != NULL))
+ 2c2:	8a 81       	ldd	r24, Y+2	; 0x02
+ 2c4:	9b 81       	ldd	r25, Y+3	; 0x03
+ 2c6:	00 97       	sbiw	r24, 0x00	; 0
+ 2c8:	39 f1       	breq	.+78     	; 0x318 <enu_StartConversionAsynch+0x70>
+ 2ca:	8c 81       	ldd	r24, Y+4	; 0x04
+ 2cc:	9d 81       	ldd	r25, Y+5	; 0x05
+ 2ce:	00 97       	sbiw	r24, 0x00	; 0
+ 2d0:	19 f1       	breq	.+70     	; 0x318 <enu_StartConversionAsynch+0x70>
+    {
+
+            ADC_pu16AsynchConversionResult = Copy_pu16Result;
+ 2d2:	8a 81       	ldd	r24, Y+2	; 0x02
+ 2d4:	9b 81       	ldd	r25, Y+3	; 0x03
+ 2d6:	90 93 61 00 	sts	0x0061, r25
+ 2da:	80 93 60 00 	sts	0x0060, r24
+
+            ADC_pvNotificationFunc = Copy_pvNotificationFunc;
+ 2de:	8c 81       	ldd	r24, Y+4	; 0x04
+ 2e0:	9d 81       	ldd	r25, Y+5	; 0x05
+ 2e2:	90 93 63 00 	sts	0x0063, r25
+ 2e6:	80 93 62 00 	sts	0x0062, r24
+
+            // Set channel is ADC0
+            ADMUX &= ~0x1F;
+ 2ea:	a7 e2       	ldi	r26, 0x27	; 39
+ 2ec:	b0 e0       	ldi	r27, 0x00	; 0
+ 2ee:	e7 e2       	ldi	r30, 0x27	; 39
+ 2f0:	f0 e0       	ldi	r31, 0x00	; 0
+ 2f2:	80 81       	ld	r24, Z
+ 2f4:	80 7e       	andi	r24, 0xE0	; 224
+ 2f6:	8c 93       	st	X, r24
+
+            // Start Conversion
+            ADCSRA|=(1<<6);
+ 2f8:	a6 e2       	ldi	r26, 0x26	; 38
+ 2fa:	b0 e0       	ldi	r27, 0x00	; 0
+ 2fc:	e6 e2       	ldi	r30, 0x26	; 38
+ 2fe:	f0 e0       	ldi	r31, 0x00	; 0
+ 300:	80 81       	ld	r24, Z
+ 302:	80 64       	ori	r24, 0x40	; 64
+ 304:	8c 93       	st	X, r24
+
+            // Enable  Interrupt
+            ADCSRA|=(1<<7);
+ 306:	a6 e2       	ldi	r26, 0x26	; 38
+ 308:	b0 e0       	ldi	r27, 0x00	; 0
+ 30a:	e6 e2       	ldi	r30, 0x26	; 38
+ 30c:	f0 e0       	ldi	r31, 0x00	; 0
+ 30e:	80 81       	ld	r24, Z
+ 310:	80 68       	ori	r24, 0x80	; 128
+ 312:	8c 93       	st	X, r24
+
+            local_enumError = ES_OK;
+ 314:	19 82       	std	Y+1, r1	; 0x01
+ 316:	02 c0       	rjmp	.+4      	; 0x31c <enu_StartConversionAsynch+0x74>
+      }
+
+
+    else
+    {
+        local_enumError = ES_NULLPOINTER;
+ 318:	82 e0       	ldi	r24, 0x02	; 2
+ 31a:	89 83       	std	Y+1, r24	; 0x01
+    }
+
+    return local_enumError;
+ 31c:	89 81       	ldd	r24, Y+1	; 0x01
+}
+ 31e:	0f 90       	pop	r0
+ 320:	0f 90       	pop	r0
+ 322:	0f 90       	pop	r0
+ 324:	0f 90       	pop	r0
+ 326:	0f 90       	pop	r0
+ 328:	cf 91       	pop	r28
+ 32a:	df 91       	pop	r29
+ 32c:	08 95       	ret
+
+0000032e <__vector_16>:
+
+
+void __vector_16 (void)  __attribute__((signal)) ;
+void __vector_16 (void)
+{
+ 32e:	1f 92       	push	r1
+ 330:	0f 92       	push	r0
+ 332:	0f b6       	in	r0, 0x3f	; 63
+ 334:	0f 92       	push	r0
+ 336:	11 24       	eor	r1, r1
+ 338:	2f 93       	push	r18
+ 33a:	3f 93       	push	r19
+ 33c:	4f 93       	push	r20
+ 33e:	5f 93       	push	r21
+ 340:	6f 93       	push	r22
+ 342:	7f 93       	push	r23
+ 344:	8f 93       	push	r24
+ 346:	9f 93       	push	r25
+ 348:	af 93       	push	r26
+ 34a:	bf 93       	push	r27
+ 34c:	ef 93       	push	r30
+ 34e:	ff 93       	push	r31
+ 350:	df 93       	push	r29
+ 352:	cf 93       	push	r28
+ 354:	cd b7       	in	r28, 0x3d	; 61
+ 356:	de b7       	in	r29, 0x3e	; 62
+#if ADC_ADJUSTMENT == Right_adjust
+					* ADC_pu16AsynchConversionResult = (ADCL|(ADCH << 8))  ;
+ 358:	a0 91 60 00 	lds	r26, 0x0060
+ 35c:	b0 91 61 00 	lds	r27, 0x0061
+ 360:	e4 e2       	ldi	r30, 0x24	; 36
+ 362:	f0 e0       	ldi	r31, 0x00	; 0
+ 364:	80 81       	ld	r24, Z
+ 366:	28 2f       	mov	r18, r24
+ 368:	30 e0       	ldi	r19, 0x00	; 0
+ 36a:	e5 e2       	ldi	r30, 0x25	; 37
+ 36c:	f0 e0       	ldi	r31, 0x00	; 0
+ 36e:	80 81       	ld	r24, Z
+ 370:	88 2f       	mov	r24, r24
+ 372:	90 e0       	ldi	r25, 0x00	; 0
+ 374:	98 2f       	mov	r25, r24
+ 376:	88 27       	eor	r24, r24
+ 378:	82 2b       	or	r24, r18
+ 37a:	93 2b       	or	r25, r19
+ 37c:	8d 93       	st	X+, r24
+ 37e:	9c 93       	st	X, r25
+
+               #else
+                   #error "Error in Prescaler Division Factor !!"
+               #endif
+
+					ADC_pvNotificationFunc() ;
+ 380:	e0 91 62 00 	lds	r30, 0x0062
+ 384:	f0 91 63 00 	lds	r31, 0x0063
+ 388:	09 95       	icall
+
+		            // Disable  Interrupt
+				    ADCSRA &=~(1<<7);
+ 38a:	a6 e2       	ldi	r26, 0x26	; 38
+ 38c:	b0 e0       	ldi	r27, 0x00	; 0
+ 38e:	e6 e2       	ldi	r30, 0x26	; 38
+ 390:	f0 e0       	ldi	r31, 0x00	; 0
+ 392:	80 81       	ld	r24, Z
+ 394:	8f 77       	andi	r24, 0x7F	; 127
+ 396:	8c 93       	st	X, r24
+}
+ 398:	cf 91       	pop	r28
+ 39a:	df 91       	pop	r29
+ 39c:	ff 91       	pop	r31
+ 39e:	ef 91       	pop	r30
+ 3a0:	bf 91       	pop	r27
+ 3a2:	af 91       	pop	r26
+ 3a4:	9f 91       	pop	r25
+ 3a6:	8f 91       	pop	r24
+ 3a8:	7f 91       	pop	r23
+ 3aa:	6f 91       	pop	r22
+ 3ac:	5f 91       	pop	r21
+ 3ae:	4f 91       	pop	r20
+ 3b0:	3f 91       	pop	r19
+ 3b2:	2f 91       	pop	r18
+ 3b4:	0f 90       	pop	r0
+ 3b6:	0f be       	out	0x3f, r0	; 63
+ 3b8:	0f 90       	pop	r0
+ 3ba:	1f 90       	pop	r1
+ 3bc:	18 95       	reti
+
+000003be <main>:
+ *  Created on: ??þ/??þ/????
+ *      Author: MostafaSaad
+ */
+
+int main()
+{
+ 3be:	df 93       	push	r29
+ 3c0:	cf 93       	push	r28
+ 3c2:	cd b7       	in	r28, 0x3d	; 61
+ 3c4:	de b7       	in	r29, 0x3e	; 62
+
+
+
+
+
+return 0;
+ 3c6:	80 e0       	ldi	r24, 0x00	; 0
+ 3c8:	90 e0       	ldi	r25, 0x00	; 0
+}
+ 3ca:	cf 91       	pop	r28
+ 3cc:	df 91       	pop	r29
+ 3ce:	08 95       	ret
+
+000003d0 <_exit>:
+ 3d0:	f8 94       	cli
+
+000003d2 <__stop_program>:
+ 3d2:	ff cf       	rjmp	.-2      	; 0x3d2 <__stop_program>
