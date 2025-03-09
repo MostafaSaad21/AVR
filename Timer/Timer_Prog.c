@@ -89,7 +89,7 @@ ES_t TIMER0_init(void) {
 
 
     #if TIMER0_PRESCALER == NO_CLOCK_SOURCE
-    // No clock source (timer stopped)
+
     TCCR0 &= ~(1 << CS00);
     TCCR0 &= ~(1 << CS01);
     TCCR0 &= ~(1 << CS02);
@@ -114,7 +114,7 @@ ES_t TIMER0_init(void) {
     TCCR0 &= ~(1 << CS01);
     TCCR0 |= (1 << CS02);
 #elif TIMER0_PRESCALER == PRESCALER_1024
-    // Prescaler 1024
+
     TCCR0 |= (1 << CS00);
     TCCR0 &= ~(1 << CS01);
     TCCR0 |= (1 << CS02);
